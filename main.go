@@ -1,6 +1,6 @@
 package main
 
-import "lighthouse-geth-proxy/src/proxy/cmd"
+import "lighthouse-geth-proxy/src/beacon-proxy/cmd"
 
 func main() {
 	cmd.Execute()

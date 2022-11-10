@@ -7,8 +7,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "goroutines-cli",
-	Short: "A CLI tooling with customizable options to explore goroutines",
+	Use:   "beacon-proxy",
+	Short: "Multi Reader-Node Proxy",
 }
 
 func Execute() {
