@@ -3,5 +3,5 @@ package main
 import "github.com/emiliocramer/lighthouse-geth-proxy/src/beacon-proxy/cmd"
 
 func main() {
-	cmd.Execute()
+	cmd.Main()
 }
