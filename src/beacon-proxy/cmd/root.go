@@ -3,9 +3,12 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/streamingfast/logging"
 	"os"
 	"time"
 )
+
+var zlog, tracer = logging.RootLogger("evm-executor", "github.com/emiliocramer/lighthouse-geth-proxy/evm-executor/cmd/executor")
 
 var rootCmd = &cobra.Command{
 	Use:   "beacon-proxy",

@@ -2,38 +2,40 @@ package cmd
 
 import (
 	"fmt"
+	"time"
+
+	evmexecutor "github.com/emiliocramer/lighthouse-geth-proxy/evm-executor"
+	jsonrpc "github.com/emiliocramer/lighthouse-geth-proxy/json-rpc"
+	"github.com/emiliocramer/lighthouse-geth-proxy/json-rpc/services"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/streamingfast/cli"
 	"github.com/streamingfast/dauth/authenticator"
 	"github.com/streamingfast/derr"
 	"github.com/streamingfast/dmetering"
 	"go.uber.org/zap"
-	"time"
 )
 
-var ServeJSONRPCCommand = Command(serveJSONRPCE,
-	"json-rpc",
-	"Starts the JSON-RPC server",
-	Description(`
-		Opens up a JSON-RPC server that accepts 'eth_call' method request
-	`),
-	Flags(func(flags *pflag.FlagSet) {
-		flags.String("listen-addr", ":8080", "The port that should be listened too for incoming JSON-RPC requests")
-		flags.String("chain", "battlefield", FlagDescription(`
-			Network name's transaction are going to be simulated for, this is used to determine the chain's config which
-			includes actual activated EIPs and at which block, the chain ID and such other parameters that affects the
-			EVM execution. We support most chain config pre-populated in Geth, as well as a 'battlefield' chain that fits
-			out Ethereum Battlefield configuration.
-		`))
-		flags.Uint64("gas-cap", defaultGasCap, "Maximum amount of Gas that will ever be allowed for a call, if 'gas-limit' is higher than 'gas-cap', the server will reduce it back to the maximum which is 'gas-cap'")
-		flags.Duration("timeout", defaultExecuteTimeout, "Maximum amount of time allow for a single 'eth_call' execution before it's killed")
-		flags.String("state-provider-dsn", "localhost:9000", "State provider DSN used to instantiate executor")
-	}),
-)
+func init() {
+	rootCmd.AddCommand(ServeJSONRPCCommand)
 
-func serveJSONRPCE(cmd *cobra.Command, _ []string) error {
+	ServeJSONRPCCommand.PersistentFlags().String("listen-addr", ":8080", "The port that should be listened too for incoming JSON-RPC requests")
+	ServeJSONRPCCommand.PersistentFlags().String("chain", "battlefield", "Network name's transaction are going to be simulated for, this is used to determine the chain's config which\n\t\t\tincludes actual activated EIPs and at which block, the chain ID and such other parameters that affects the\n\t\t\tEVM execution. We support most chain config pre-populated in Geth, as well as a 'battlefield' chain that fits\n\t\t\tout Ethereum Battlefield configuration.")
+	ServeJSONRPCCommand.PersistentFlags().Uint64("gas-cap", defaultGasCap, "Maximum amount of Gas that will ever be allowed for a call, if 'gas-limit' is higher than 'gas-cap', the server will reduce it back to the maximum which is 'gas-cap'")
+	ServeJSONRPCCommand.PersistentFlags().Duration("timeout", defaultExecuteTimeout, "Maximum amount of time allow for a single 'eth_call' execution before it's killed")
+	ServeJSONRPCCommand.PersistentFlags().String("state-provider-dsn", "localhost:9000", "State provider DSN used to instantiate executor")
+}
+
+var ServeJSONRPCCommand = &cobra.Command{
+	Use:   "listen",
+	Short: "Starts the JSON-RPC server",
+	Long:  "Opens up a JSON-RPC server that accepts 'eth_call' method request",
+	Run: func(cmd *cobra.Command, args []string) {
+		serveJSONRPCE(cmd)
+	},
+}
+
+func serveJSONRPCE(cmd *cobra.Command) error {
 	chain := viper.GetString("serve-json-rpc-chain")
 	gasCap := viper.GetUint64("serve-json-rpc-gas-cap")
 	listenAddr := viper.GetString("serve-json-rpc-listen-addr")
