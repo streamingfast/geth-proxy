@@ -23,13 +23,7 @@ import (
 
 	"github.com/emiliocramer/lighthouse-geth-proxy/json-rpc/services"
 	"github.com/gorilla/mux"
-	"github.com/streamingfast/dauth/authenticator"
-	_ "github.com/streamingfast/dauth/authenticator/gcp"
-	dauthMiddleware "github.com/streamingfast/dauth/authenticator/middleware"
-	_ "github.com/streamingfast/dauth/authenticator/null"
-	"github.com/streamingfast/derr"
 	"github.com/streamingfast/dhttp"
-	"github.com/streamingfast/dmetering"
 	"github.com/streamingfast/logging"
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"
@@ -48,8 +42,6 @@ func NewServer(
 	httpListenAddr string,
 	isReady func() bool,
 	serviceHandlers []services.ServiceHandler,
-	auth authenticator.Authenticator,
-	metering dmetering.Metering,
 ) (*Server, error) {
 	router := mux.NewRouter()
 	srv := &Server{
@@ -79,33 +71,22 @@ func NewServer(
 	coreRouter.Use(dhttp.NewLogRequestMiddleware(zlog))
 	coreRouter.Use(dhttp.NewOpenCensusMiddleware())
 	coreRouter.Use(dhttp.NewAddTraceIDHeaderMiddleware(zlog))
-	coreRouter.Use(newAuthMiddleware(auth))
 
 	rpcRouter := coreRouter.PathPrefix("/").Subrouter()
 	rpcRouter.Use(forceContentTypeApplicationJSON)
 
+	rpc.MethodSeparator = "_"
 	rpcServer := rpc.NewServer()
 	rpcServer.RegisterCodec(services.NewEthereumCodec(), "application/json")
-
-	rpcServer.RegisterInterceptFunc(createRequestInterceptor)
 	rpcServer.RegisterBeforeFunc(func(i *rpc.RequestInfo, args interface{}) {
-		metering.EmitWithContext(dmetering.Event{
-			Kind:           "HTTP REST - JSONRPC",
-			Source:         "evm-executor",
-			Method:         i.Method,
-			IngressBytes:   i.Request.ContentLength,
-			RequestsCount:  1,
-			ResponsesCount: 1,
-		}, i.Request.Context())
-
-		logRequest("incoming request", zapcore.DebugLevel, i)
+		logRequest("incoming request", zapcore.DebugLevel, i, zap.Any("args", args))
 	})
+	rpcServer.RegisterInterceptFunc(createRequestInterceptor)
 	rpcServer.RegisterValidateRequestFunc(ValidateRequest)
 	rpcServer.RegisterAfterFunc(afterRequestInterceptor)
 
 	for _, service := range serviceHandlers {
 		namespace := service.Namespace()
-
 		err := rpcServer.RegisterService(service, namespace)
 		if err != nil {
 			return nil, fmt.Errorf("registering service %q (service handler of type %T): %w", namespace, service, err)
@@ -184,26 +165,4 @@ func forceContentTypeApplicationJSON(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
-}
-
-func newAuthMiddleware(auth authenticator.Authenticator) mux.MiddlewareFunc {
-	authErrorHandler := func(w http.ResponseWriter, ctx context.Context, err error) {
-		dhttp.WriteError(ctx, w, derr.HTTPUnauthorizedError(ctx, err, derr.C("auth_invalid_token_error"),
-			"Unable to correctly decode provided token.",
-			"token", "",
-			"reason", err.Error(),
-		))
-	}
-
-	extractToken := func(r *http.Request) string {
-		if vars := mux.Vars(r); r != nil {
-			return vars["token"]
-		}
-
-		return ""
-	}
-
-	instance := dauthMiddleware.NewAuthMiddleware(auth, authErrorHandler, dauthMiddleware.WithCustomTokenExtractor(extractToken))
-
-	return instance.Handler
 }

@@ -17,26 +17,38 @@ package services
 import (
 	"github.com/gorilla/rpc/v2"
 	"github.com/streamingfast/eth-go"
+	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/streamingfast/logging"
 )
 
 type ExecutePayloadV1Args struct {
-	ParentHash eth.Hash `json:"parentHash"`
+	ParentHash    eth.Hash              `json:"parentHash"`
+	FeeRecipient  eth.Address           `json:"feeRecipient"`
+	StateRoot     eth.Hash              `json:"stateRoot"`
+	ReceiptsRoot  eth.Hash              `json:"receiptsRoot"`
+	LogsBloom     eth.Hex               `json:"logsBloom"`
+	PrevRandao    eth.Hash              `json:"prevRandao"`
+	BlockNumber   eth.Uint64            `json:"blockNumber"`
+	GasLimit      eth.Uint64            `json:"gasLimit"`
+	GasUsed       eth.Uint64            `json:"gasUsed"`
+	Timestamp     eth.Uint64            `json:"timestamp"`
+	ExtraData     eth.Hash              `json:"extraData"`
+	BaseFeePerGas eth.Hex               `json:"baseFeePerGas"`
+	BlockHash     eth.Hash              `json:"blockHash"`
+	Transactions  []eth.TransactionType `json:"transactions"`
 }
 
-func (e *EngineService) ExecutePayloadV1(r *http.Request, args *ExecutePayloadV1Args, reply *eth.Hex) error {
-
+func (e *EngineService) ExecutePayLoadV1(r *http.Request, args *ExecutePayloadV1Args, reply *eth.Hex) error {
 	ctx := r.Context()
-
 	zlogger := logging.Logger(ctx, zlog)
-	zlogger.Info("execute call succeeed")
+	zlogger.Info("engine execute payload v1:", zap.Reflect("args", args))
 
 	*reply = eth.MustNewHex("ab")
 	return nil
 }
 
-func (a *ExecutePayloadV1Args) Validate(requestInfo *rpc.RequestInfo) error {
+func (e *ExecutePayloadV1Args) Validate(requestInfo *rpc.RequestInfo) error {
 	return nil
 }

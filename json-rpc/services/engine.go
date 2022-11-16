@@ -21,6 +21,6 @@ func NewEngineService() *EngineService {
 	return &EngineService{}
 }
 
-func (s *EngineService) Namespace() string {
+func (e *EngineService) Namespace() string {
 	return "engine"
 }
