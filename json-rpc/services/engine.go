@@ -14,25 +14,13 @@
 
 package services
 
-import (
-	"net/http"
-
-	"github.com/gorilla/rpc/v2"
-	"github.com/streamingfast/logging"
-)
-
-func (e *NetService) Version(r *http.Request, args *VersionArgs, reply *NetworkID) error {
-	ctx := r.Context()
-	zlogger := logging.Logger(ctx, zlog)
-	zlogger.Debug("net version")
-
-	*reply = e.networkID
-	return nil
+type EngineService struct {
 }
 
-type VersionArgs struct {
+func NewEngineService() *EngineService {
+	return &EngineService{}
 }
 
-func (a *VersionArgs) Validate(requestInfo *rpc.RequestInfo) error {
-	return nil
+func (s *EngineService) Namespace() string {
+	return "engine"
 }

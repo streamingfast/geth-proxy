@@ -15,19 +15,28 @@
 package services
 
 import (
-	evmexecutor "github.com/emiliocramer/lighthouse-geth-proxy/evm-executor"
+	"github.com/gorilla/rpc/v2"
+	"github.com/streamingfast/eth-go"
+	"net/http"
+
+	"github.com/streamingfast/logging"
 )
 
-type EthService struct {
-	evmExecutor evmexecutor.CallExecutor
+type ExecutePayloadV1Args struct {
+	ParentHash eth.Hash `json:"parentHash"`
 }
 
-func NewEthService(evmExecutor evmexecutor.CallExecutor) *EthService {
-	return &EthService{
-		evmExecutor: evmExecutor,
-	}
+func (e *EngineService) ExecutePayloadV1(r *http.Request, args *ExecutePayloadV1Args, reply *eth.Hex) error {
+
+	ctx := r.Context()
+
+	zlogger := logging.Logger(ctx, zlog)
+	zlogger.Info("execute call succeeed")
+
+	*reply = eth.MustNewHex("ab")
+	return nil
 }
 
-func (s *EthService) Namespace() string {
-	return "eth"
+func (a *ExecutePayloadV1Args) Validate(requestInfo *rpc.RequestInfo) error {
+	return nil
 }

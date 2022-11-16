@@ -88,7 +88,7 @@ func NewServer(
 	rpcServer.RegisterCodec(services.NewEthereumCodec(), "application/json")
 
 	rpcServer.RegisterInterceptFunc(createRequestInterceptor)
-	rpcServer.RegisterBeforeFunc(func(i *rpc.RequestInfo) {
+	rpcServer.RegisterBeforeFunc(func(i *rpc.RequestInfo, args interface{}) {
 		metering.EmitWithContext(dmetering.Event{
 			Kind:           "HTTP REST - JSONRPC",
 			Source:         "evm-executor",
