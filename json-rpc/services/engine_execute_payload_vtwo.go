@@ -23,7 +23,7 @@ import (
 	"github.com/streamingfast/logging"
 )
 
-type ExecutePayloadV1Args struct {
+type ExecutePayloadV2Args struct {
 	ParentHash    eth.Hash              `json:"parentHash"`
 	FeeRecipient  eth.Address           `json:"feeRecipient"`
 	StateRoot     eth.Hash              `json:"stateRoot"`
@@ -38,17 +38,18 @@ type ExecutePayloadV1Args struct {
 	BaseFeePerGas BigInt                `json:"baseFeePerGas"`
 	BlockHash     eth.Hash              `json:"blockHash"`
 	Transactions  []eth.TransactionType `json:"transactions"`
+	Withdrawals   []WithdrawalV1Args    `json:"withdrawals"`
 }
 
-func (e *EngineService) ExecutePayLoadV1(r *http.Request, args *ExecutePayloadV1Args, reply *eth.Hex) error {
+func (e *EngineService) ExecutePayLoadV2(r *http.Request, args *ExecutePayloadV2Args, reply *eth.Hex) error {
 	ctx := r.Context()
 	zlogger := logging.Logger(ctx, zlog)
-	zlogger.Info("engine execute payload v1:", zap.Reflect("args", args))
+	zlogger.Info("engine execute payload v2 :", zap.Reflect("args", args))
 
 	*reply = eth.MustNewHex("ab")
 	return nil
 }
 
-func (e *ExecutePayloadV1Args) Validate(requestInfo *rpc.RequestInfo) error {
+func (e *ExecutePayloadV2Args) Validate(requestInfo *rpc.RequestInfo) error {
 	return nil
 }
