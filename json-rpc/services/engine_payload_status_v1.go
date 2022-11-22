@@ -23,20 +23,20 @@ import (
 	"github.com/streamingfast/logging"
 )
 
-type Status string
+type EnginePayloadStatus string
 
 const (
-	VALID              Status = "VALID"
-	INVALID            Status = "INVALID"
-	SYNCING            Status = "SYNCING"
-	ACCEPTED           Status = "ACCEPTED"
-	INVALID_BLOCK_HASH Status = "INVALID_BLOCK_HASH"
+	EnginePayloadStatusValid            EnginePayloadStatus = "VALID"
+	EnginePayloadStatusInvalid          EnginePayloadStatus = "INVALID"
+	EnginePayloadStatusSyncing          EnginePayloadStatus = "SYNCING"
+	EnginePayloadStatusAccepted         EnginePayloadStatus = "ACCEPTED"
+	EnginePayloadStatusInvalidBlockHash EnginePayloadStatus = "INVALID_BLOCK_HASH"
 )
 
 type PayloadStatusV1Args struct {
-	Status          Status   `json:"status"`
-	LatestValidHash eth.Hash `json:"latestValidHash"`
-	ValidationError string   `json:"validationError"`
+	Status          EnginePayloadStatus `json:"status"`
+	LatestValidHash eth.Hash            `json:"latestValidHash"`
+	ValidationError string              `json:"validationError"`
 }
 
 func (e *EngineService) PayloadStatusV1(r *http.Request, args *PayloadStatusV1Args, reply *eth.Hex) error {

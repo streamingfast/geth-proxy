@@ -32,9 +32,9 @@ type ForkchoiceStateV1Args struct {
 func (e *EngineService) ForkchoiceStateV1(r *http.Request, args *ForkchoiceStateV1Args, reply *eth.Hex) error {
 	ctx := r.Context()
 	zlogger := logging.Logger(ctx, zlog)
-	zlogger.Info("engine forkchoice state v1 :", zap.Reflect("args", args))
+	zlogger.Info("engine forkchoice state v1 args:", zap.Reflect("args", args))
+	zlogger.Info("engine forkchoice state v1 reply:", zap.Reflect("reply", reply))
 
-	*reply = eth.MustNewHex("ab")
 	return nil
 }
 

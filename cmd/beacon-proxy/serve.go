@@ -15,7 +15,7 @@ import (
 func init() {
 	rootCmd.AddCommand(ServeJSONRPCCommand)
 
-	ServeJSONRPCCommand.Flags().String("listen-addr", ":8080", "The port that should be listened too for incoming JSON-RPC requests")
+	ServeJSONRPCCommand.Flags().String("listen-addr-beacon", ":8080", "The port that should be listened too for incoming JSON-RPC requests")
 }
 
 var ServeJSONRPCCommand = &cobra.Command{
@@ -25,15 +25,16 @@ var ServeJSONRPCCommand = &cobra.Command{
 }
 
 func serveJSONRPCE(cmd *cobra.Command, args []string) error {
-	listenAddr := viper.GetString("serve-listen-addr")
+	listenAddrBeacon := viper.GetString("serve-listen-addr-beacon")
 
-	zlog.Info("starting server", zap.String("listen_addr", listenAddr))
+	zlog.Info("starting server", zap.String("listen_addr", listenAddrBeacon))
 
 	server, err := jsonrpc.NewServer(
-		listenAddr,
+		listenAddrBeacon,
 		func() bool { return true },
 		[]services.ServiceHandler{
 			services.NewEngineService(),
+			services.NewEthService(),
 		},
 	)
 

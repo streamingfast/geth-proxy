@@ -32,9 +32,9 @@ type PayloadAttributesV1Args struct {
 func (e *EngineService) PayloadAttributesV1(r *http.Request, args *PayloadAttributesV1Args, reply *eth.Hex) error {
 	ctx := r.Context()
 	zlogger := logging.Logger(ctx, zlog)
-	zlogger.Info("engine payload attributes v1 :", zap.Reflect("args", args))
+	zlogger.Info("engine payload attributes v1 args:", zap.Reflect("args", args))
+	zlogger.Info("engine payload attributes v1 reply:", zap.Reflect("reply", reply))
 
-	*reply = eth.MustNewHex("ab")
 	return nil
 }
 
