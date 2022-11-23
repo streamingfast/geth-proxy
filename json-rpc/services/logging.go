@@ -18,4 +18,4 @@ import (
 	"github.com/streamingfast/logging"
 )
 
-var zlog, tracer = logging.PackageLogger("evm-executor.json-rpc", "github.com/emiliocramer/lighthouse-geth-proxy/json-rpc/services")
+var zlog, tracer = logging.PackageLogger("evm-executor.json-rpc", "github.com/streamingfast/geth-proxy/json-rpc/services")

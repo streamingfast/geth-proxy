@@ -17,10 +17,9 @@ package services
 import (
 	"net/http"
 
-	"github.com/emiliocramer/lighthouse-geth-proxy/config"
-	"github.com/gorilla/rpc/v2"
 	"github.com/gorilla/rpc/v2/json2"
 	ethrpc "github.com/streamingfast/eth-go/rpc"
+	 "github.com/streamingfast/geth-proxy/"
 	"github.com/streamingfast/logging"
 	"go.uber.org/zap"
 )
@@ -40,7 +39,7 @@ func (e *EthService) GetBlockByNumber(r *http.Request, args *GetBlockByNumberArg
 		}
 	}
 
-	block, err := e.evmExecutor.BlockByNumber(ctx, config.ToBstreamBlockRef(args.BlockRef))
+	block, err := e.evmExecutor.BlockByNumber(ctx, .ToBstreamBlockRef(args.BlockRef))
 	if err != nil {
 		zlogger.Error("block by number call failed", zap.Error(err))
 		return &json2.Error{Code: json2.E_SERVER, Message: err.Error()}

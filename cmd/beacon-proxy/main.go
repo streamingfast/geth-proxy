@@ -4,14 +4,13 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	. "github.com/streamingfast/cli"
 	"github.com/streamingfast/logging"
 	"go.uber.org/zap"
 	"net/http"
 	"time"
 )
 
-var zlog, tracer = logging.RootLogger("beacon-proxy", "github.com/emiliocramer/lighthouse-geth-proxy/cmd/beacon-proxy")
+var zlog, tracer = logging.RootLogger("beacon-proxy", "github.com/streamingfast/geth-proxy/cmd/beacon-proxy")
 
 func init() {
 	logging.InstantiateLoggers()

@@ -5,11 +5,11 @@ import (
 	"go.uber.org/zap"
 	"time"
 
-	jsonrpc "github.com/emiliocramer/lighthouse-geth-proxy/json-rpc"
-	"github.com/emiliocramer/lighthouse-geth-proxy/json-rpc/services"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/streamingfast/derr"
+	jsonrpc "github.com/streamingfast/geth-proxy/json-rpc"
+	"github.com/streamingfast/geth-proxy/json-rpc/services"
 )
 
 func init() {

@@ -17,13 +17,12 @@ package jsonrpc
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/rpc/v2"
 	"net/http"
 	"time"
 
-	"github.com/emiliocramer/lighthouse-geth-proxy/json-rpc/services"
 	"github.com/gorilla/mux"
 	"github.com/streamingfast/dhttp"
+	"github.com/streamingfast/geth-proxy/json-rpc/services"
 	"github.com/streamingfast/logging"
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"

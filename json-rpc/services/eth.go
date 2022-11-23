@@ -14,7 +14,7 @@
 
 package services
 
-import "github.com/emiliocramer/lighthouse-geth-proxy/config"
+import "github.com/streamingfast/geth-proxy/config"
 
 type EthService struct {
 	evmExecutor config.CallExecutor
